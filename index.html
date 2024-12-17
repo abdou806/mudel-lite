@@ -105,6 +105,13 @@
             background-color: #ff1a1a;
         }
 
+        /* Countdown Timer */
+        .countdown {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #ff4c4c;
+        }
+
         /* Comment section */
         .comments {
             margin-top: 10px;
@@ -248,6 +255,7 @@
     <main style="display: none;" id="main-content">
         <section id="tasks">
             <h2>Current Tasks</h2>
+            <input type="text" id="search-task" placeholder="Search tasks..." oninput="filterTasks()">
             <ul id="task-list">
                 <!-- Tasks will be populated here dynamically -->
             </ul>
@@ -260,7 +268,7 @@
                 <input type="text" id="task-name" placeholder="Enter task name" required>
 
                 <label for="task-deadline">Deadline (Optional):</label>
-                <input type="date" id="task-deadline">
+                <input type="datetime-local" id="task-deadline">
 
                 <label for="task-duration">Duration (Optional, No End Date):</label>
                 <input type="checkbox" id="task-duration"> No End Date
@@ -288,6 +296,7 @@
         const taskForm = document.getElementById('task-form');
         const addTaskSection = document.getElementById('add-task');
         const taskList = document.getElementById('task-list');
+        const searchInput = document.getElementById('search-task');
 
         let isAdmin = false;
 
@@ -305,12 +314,10 @@
                 isAdmin = user.role === 'admin';
                 userRoleSpan.textContent = isAdmin ? 'Admin' : 'User';
 
-                // Display appropriate sections
                 loginSection.style.display = 'none';
                 welcomeMessage.style.display = 'block';
                 mainContent.style.display = 'block';
 
-                // Hide "Add Task" section for regular users
                 if (!isAdmin) {
                     addTaskSection.style.display = 'none';
                 }
@@ -337,6 +344,7 @@
             tasks.push(task);
             localStorage.setItem('tasks', JSON.stringify(tasks));
 
+            alert('Task added successfully!');
             loadTasks();
         });
 
@@ -349,47 +357,14 @@
                 li.innerHTML = `
                     <span>Task: ${task.name}</span><br>
                     <em>Deadline: ${task.deadline}</em><br>
+                    <span class="countdown" id="countdown-${index}"></span><br>
                     <button onclick="removeTask(${index})">Remove</button>
                 `;
 
-                // Comments Section
-                const commentSection = document.createElement('div');
-                commentSection.classList.add('comments');
-
-                const commentList = document.createElement('ul');
-                commentSection.appendChild(commentList);
-
-                const commentForm = document.createElement('form');
-                const commentInput = document.createElement('input');
-                commentInput.placeholder = 'Add a comment...';
-                const commentButton = document.createElement('button');
-                commentButton.textContent = 'Post Comment';
-
-                commentForm.appendChild(commentInput);
-                commentForm.appendChild(commentButton);
-
-                commentForm.addEventListener('submit', function (e) {
-                    e.preventDefault();
-                    const commentText = commentInput.value;
-                    const comments = JSON.parse(localStorage.getItem('comments')) || {};
-                    if (!comments[index]) comments[index] = [];
-                    comments[index].push(commentText);
-                    localStorage.setItem('comments', JSON.stringify(comments));
-
-                    loadTasks(); // Reload tasks to display new comment
-                });
-
-                li.appendChild(commentSection);
-                li.appendChild(commentForm);
-
-                // Load existing comments
-                const comments = JSON.parse(localStorage.getItem('comments')) || {};
-                if (comments[index]) {
-                    comments[index].forEach(comment => {
-                        const commentItem = document.createElement('li');
-                        commentItem.textContent = comment;
-                        commentList.appendChild(commentItem);
-                    });
+                // Countdown Timer
+                const deadlineDate = new Date(task.deadline);
+                if (task.deadline !== 'No deadline') {
+                    updateCountdown(deadlineDate, index);
                 }
 
                 taskList.appendChild(li);
@@ -402,6 +377,50 @@
             localStorage.setItem('tasks', JSON.stringify(tasks));
 
             loadTasks();
+        }
+
+        function updateCountdown(deadlineDate, index) {
+            const countdownElement = document.getElementById(`countdown-${index}`);
+            const interval = setInterval(function () {
+                const now = new Date();
+                const timeLeft = deadlineDate - now;
+                
+                if (timeLeft <= 0) {
+                    countdownElement.textContent = 'Deadline Reached!';
+                    clearInterval(interval);
+                } else {
+                    const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+                    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+                    countdownElement.textContent = `${hours}h ${minutes}m ${seconds}s remaining`;
+                }
+            }, 1000);
+        }
+
+        function filterTasks() {
+            const query = searchInput.value.toLowerCase();
+            const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            const filteredTasks = tasks.filter(task =>
+                task.name.toLowerCase().includes(query)
+            );
+            displayFilteredTasks(filteredTasks);
+        }
+
+        function displayFilteredTasks(tasks) {
+            taskList.innerHTML = '';
+            tasks.forEach((task, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <span>Task: ${task.name}</span><br>
+                    <em>Deadline: ${task.deadline}</em><br>
+                    <span class="countdown" id="countdown-${index}"></span><br>
+                    <button onclick="removeTask(${index})">Remove</button>
+                `;
+                taskList.appendChild(li);
+                if (task.deadline !== 'No deadline') {
+                    updateCountdown(new Date(task.deadline), index);
+                }
+            });
         }
     </script>
 </body>
