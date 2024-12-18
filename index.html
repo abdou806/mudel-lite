@@ -105,6 +105,93 @@
             background-color: #ff1a1a;
         }
 
+        /* Countdown Timer */
+        .countdown {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #ff4c4c;
+        }
+
+        /* Comment section */
+        .comments {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f1f1f1;
+            border-radius: 5px;
+        }
+
+        .comments ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comments ul li {
+            padding: 8px;
+            background: white;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .comments form {
+            display: flex;
+            gap: 10px;
+        }
+
+        .comments input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .comments button {
+            background: #4facfe;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px;
+            cursor: pointer;
+        }
+
+        .comments button:hover {
+            background: #00bcd4;
+        }
+
+        /* Form */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        form label {
+            font-weight: bold;
+            font-size: 1em;
+        }
+
+        form input {
+            padding: 12px;
+            font-size: 1em;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        form button {
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        form button:hover {
+            background: linear-gradient(to right, #00f2fe, #4facfe);
+        }
+
         /* Footer */
         footer {
             text-align: center;
@@ -168,12 +255,13 @@
     <main style="display: none;" id="main-content">
         <section id="tasks">
             <h2>Current Tasks</h2>
+            <input type="text" id="search-task" placeholder="Search tasks..." oninput="filterTasks()">
             <ul id="task-list">
                 <!-- Tasks will be populated here dynamically -->
             </ul>
         </section>
 
-        <section id="add-task" style="display: none;">
+        <section id="add-task">
             <h2>Add a New Task</h2>
             <form id="task-form">
                 <label for="task-name">Task Name:</label>
@@ -181,6 +269,9 @@
 
                 <label for="task-deadline">Deadline (Optional):</label>
                 <input type="datetime-local" id="task-deadline">
+
+                <label for="task-duration">Duration (Optional, No End Date):</label>
+                <input type="checkbox" id="task-duration"> No End Date
 
                 <button type="submit">Add Task</button>
             </form>
@@ -191,72 +282,4 @@
         <p>&copy; 2024 Student Help Portal. All rights reserved.</p>
     </footer>
 
-    <script src="firebase-database.js"></script>
-    <script>
-        const loginForm = document.getElementById('login-form');
-        const loginSection = document.getElementById('login-section');
-        const mainContent = document.getElementById('main-content');
-        const welcomeMessage = document.getElementById('welcome-message');
-        const userRoleSpan = document.getElementById('user-role');
-        const taskForm = document.getElementById('task-form');
-        const addTaskSection = document.getElementById('add-task');
-        const taskList = document.getElementById('task-list');
-
-        loginForm.addEventListener('submit', async function (e) {
-            e.preventDefault();
-
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-
-            try {
-                const snapshot = await firebase.database().ref('users').once('value');
-                const users = snapshot.val();
-
-                const user = Object.values(users).find(
-                    u => u.username === username && u.password === password
-                );
-
-                if (user) {
-                    const isAdmin = user.role === 'admin';
-                    userRoleSpan.textContent = isAdmin ? 'Admin' : 'User';
-
-                    loginSection.style.display = 'none';
-                    welcomeMessage.style.display = 'block';
-                    mainContent.style.display = 'block';
-
-                    if (isAdmin) {
-                        addTaskSection.style.display = 'block';
-                    }
-
-                    loadTasks();
-                } else {
-                    alert('Invalid credentials');
-                }
-            } catch (error) {
-                console.error('Error fetching users:', error);
-                alert('An error occurred. Please try again.');
-            }
-        });
-
-        taskForm.addEventListener('submit', async function (e) {
-            e.preventDefault();
-
-            const taskName = document.getElementById('task-name').value;
-            const taskDeadline = document.getElementById('task-deadline').value || 'No deadline';
-
-            const newTaskRef = firebase.database().ref('tasks').push();
-            await newTaskRef.set({
-                name: taskName,
-                deadline: taskDeadline
-            });
-
-            alert('Task added successfully!');
-            loadTasks();
-        });
-
-        async function loadTasks() {
-            const snapshot = await firebase.database().ref('tasks').once('value');
-            const tasks = snapshot.val() || {};
-
-            taskList.innerHTML = '';
-           
+    <
