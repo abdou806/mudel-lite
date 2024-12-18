@@ -1,233 +1,53 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Help Portal</title>
     <style>
-        /* General styles */
+        /* Basic styles for the layout */
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
             margin: 0;
             padding: 0;
-            background-color: #eef2f3;
-            color: #333;
-            overflow-x: hidden;
         }
-
-        /* Header */
         header {
-            background: linear-gradient(to right, #4facfe, #00f2fe);
+            background-color: #4CAF50;
             color: white;
-            padding: 40px 20px;
             text-align: center;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            padding: 1em;
         }
-
-        header h1 {
-            margin: 0;
-            font-size: 2.8em;
-            font-weight: bold;
-        }
-
-        header p {
-            font-size: 1.2em;
-            margin-top: 10px;
-        }
-
-        /* Main content */
-        main {
-            padding: 30px 15px;
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            gap: 30px;
-            flex-wrap: wrap;
-        }
-
-        section {
-            flex: 1;
-            min-width: 300px;
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
-        }
-
-        section:hover {
-            transform: translateY(-5px);
-        }
-
-        section h2 {
-            margin-top: 0;
-            color: #00bcd4;
-            border-bottom: 2px solid #4facfe;
-            padding-bottom: 5px;
-        }
-
-        /* Task list */
-        #task-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        #task-list li {
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            background-color: #f9f9f9;
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        #task-list li span {
-            font-weight: bold;
-        }
-
-        #task-list li em {
-            color: #666;
-        }
-
-        #task-list li button {
-            background-color: #ff4c4c;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 5px 10px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        #task-list li button:hover {
-            background-color: #ff1a1a;
-        }
-
-        /* Comment section */
-        .comments {
-            margin-top: 10px;
-            padding: 10px;
-            background: #f1f1f1;
-            border-radius: 5px;
-        }
-
-        .comments ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .comments ul li {
-            padding: 8px;
-            background: white;
-            margin-bottom: 5px;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .comments form {
-            display: flex;
-            gap: 10px;
-        }
-
-        .comments input {
-            flex: 1;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        .comments button {
-            background: #4facfe;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 8px;
-            cursor: pointer;
-        }
-
-        .comments button:hover {
-            background: #00bcd4;
-        }
-
-        /* Countdown Timer */
-        .countdown {
-            font-weight: bold;
-            color: red;
-        }
-
-        /* Form */
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        form label {
-            font-weight: bold;
-            font-size: 1em;
-        }
-
-        form input {
-            padding: 12px;
-            font-size: 1em;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-        }
-
-        form button {
-            background: linear-gradient(to right, #4facfe, #00f2fe);
-            color: white;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1em;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        form button:hover {
-            background: linear-gradient(to right, #00f2fe, #4facfe);
-        }
-
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 20px 0;
-            background-color: #eef2f3;
-            color: #555;
-            font-size: 0.9em;
-        }
-
-        footer p {
-            margin: 0;
-        }
-
-        /* Login Section */
         #login-section {
-            max-width: 400px;
-            margin: 50px auto;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: block;
             text-align: center;
+            margin: 2em;
         }
-
-        #login-section input {
-            margin-bottom: 15px;
-            width: 100%;
+        #login-form input {
+            margin: 0.5em;
+            padding: 0.5em;
+            width: 200px;
         }
-
-        #login-section button {
-            width: 100%;
+        #login-form button {
+            padding: 0.5em 2em;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
         }
-
-        #welcome-message {
+        #main-content {
             display: none;
             text-align: center;
-            margin: 20px auto;
+            padding: 2em;
+        }
+        footer {
+            text-align: center;
+            padding: 1em;
+            background-color: #4CAF50;
+            color: white;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
         }
     </style>
 </head>
@@ -254,6 +74,7 @@
     <main style="display: none;" id="main-content">
         <section id="tasks">
             <h2>Current Tasks</h2>
+            <input type="text" id="search-task" placeholder="Search tasks..." oninput="filterTasks()">
             <ul id="task-list">
                 <!-- Tasks will be populated here dynamically -->
             </ul>
@@ -266,10 +87,7 @@
                 <input type="text" id="task-name" placeholder="Enter task name" required>
 
                 <label for="task-deadline">Deadline (Optional):</label>
-                <input type="date" id="task-deadline">
-
-                <label for="task-time">Task Time (Optional):</label>
-                <input type="time" id="task-time">
+                <input type="datetime-local" id="task-deadline">
 
                 <label for="task-duration">Duration (Optional, No End Date):</label>
                 <input type="checkbox" id="task-duration"> No End Date
@@ -283,68 +101,170 @@
         <p>&copy; 2024 Student Help Portal. All rights reserved.</p>
     </footer>
 
-    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database.js"></script>
+    <!-- Add Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.16.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.16.0/firebase-database.js"></script>
+
+    <!-- Link to Firebase config file -->
+    <script src="firebase-config.js"></script>
+
     <script>
-        // Firebase Configuration
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY", // Replace with your Firebase API key
-            authDomain: "your-app.firebaseapp.com", // Replace with your Firebase auth domain
-            databaseURL: "https://model-lite-default-rtdb.firebaseio.com", // Replace with your Firebase Database URL
-            projectId: "model-lite", // Replace with your Firebase Project ID
-            storageBucket: "your-app.appspot.com", // Replace with your Firebase storage bucket
-            messagingSenderId: "1234567890", // Replace with your Firebase messaging sender ID
-            appId: "1:1234567890:web:abcd1234" // Replace with your Firebase App ID
-        };
+        // Handle login
+        const users = [
+            { username: 'admin', password: 'ghanighanizoro', role: 'admin' },
+            { username: 'student', password: 'abcd', role: 'user' }
+        ];
 
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
+        const loginForm = document.getElementById('login-form');
+        const loginSection = document.getElementById('login-section');
+        const mainContent = document.getElementById('main-content');
+        const welcomeMessage = document.getElementById('welcome-message');
+        const userRoleSpan = document.getElementById('user-role');
+        const taskForm = document.getElementById('task-form');
+        const addTaskSection = document.getElementById('add-task');
+        const taskList = document.getElementById('task-list');
+        const searchInput = document.getElementById('search-task');
 
-        // Task submission logic
-        document.getElementById("task-form").addEventListener("submit", function (e) {
+        let isAdmin = false;
+
+        // Login event listener
+        loginForm.addEventListener('submit', function (e) {
             e.preventDefault();
 
-            const taskName = document.getElementById("task-name").value;
-            const taskDeadline = document.getElementById("task-deadline").value;
-            const taskTime = document.getElementById("task-time").value;
-            const taskDuration = document.getElementById("task-duration").checked ? "No End Date" : "Has End Date";
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
 
-            // Task object
+            const user = users.find(user => user.username === username && user.password === password);
+
+            if (user) {
+                isAdmin = user.role === 'admin';
+                userRoleSpan.textContent = isAdmin ? 'Admin' : 'User';
+
+                loginSection.style.display = 'none';
+                welcomeMessage.style.display = 'block';
+                mainContent.style.display = 'block';
+
+                if (!isAdmin) {
+                    addTaskSection.style.display = 'none';
+                }
+
+                loadTasksFromFirebase();
+            } else {
+                alert('Invalid credentials');
+            }
+        });
+
+        // Submit new task
+        taskForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const taskName = document.getElementById('task-name').value;
+            const taskDeadline = document.getElementById('task-deadline').value;
+            const hasNoEndDate = document.getElementById('task-duration').checked;
+
             const task = {
                 name: taskName,
-                deadline: taskDeadline,
-                time: taskTime,
-                duration: taskDuration,
-                createdAt: new Date().toISOString()
+                deadline: taskDeadline || 'No deadline',
+                hasNoEndDate: hasNoEndDate,
+                comments: []
             };
 
-            // Add task to Firebase
-            const taskRef = database.ref('tasks');
-            taskRef.push(task)
-                .then(() => {
-                    alert('Task added successfully');
-                    document.getElementById("task-form").reset();
-                })
-                .catch((error) => {
-                    console.error('Error adding task: ', error);
-                });
+            // Save task to Firebase
+            const tasksRef = database.ref('tasks');
+            tasksRef.push(task, (error) => {
+                if (error) {
+                    alert('Failed to add task');
+                } else {
+                    alert('Task added successfully!');
+                    loadTasksFromFirebase();
+                }
+            });
         });
 
         // Load tasks from Firebase
-        const taskList = document.getElementById("task-list");
+        function loadTasksFromFirebase() {
+            const tasksRef = database.ref('tasks');
 
-        firebase.database().ref('tasks').on("child_added", function(snapshot) {
-            const taskData = snapshot.val();
-            const taskItem = document.createElement("li");
-            taskItem.innerHTML = `
-                <span>Task: ${taskData.name}</span><br>
-                <em>Deadline: ${taskData.deadline}</em><br>
-                <strong>Time: ${taskData.time}</strong><br>
-                <span class="countdown">Duration: ${taskData.duration}</span>
-            `;
-            taskList.appendChild(taskItem);
-        });
+            tasksRef.once('value', (snapshot) => {
+                const tasks = snapshot.val();
+                taskList.innerHTML = '';
+
+                if (tasks) {
+                    Object.keys(tasks).forEach((taskId) => {
+                        const task = tasks[taskId];
+                        const li = document.createElement('li');
+                        li.innerHTML = `
+                            <span>Task: ${task.name}</span><br>
+                            <em>Deadline: ${task.deadline}</em><br>
+                            <span class="countdown" id="countdown-${taskId}"></span><br>
+                            <button onclick="removeTask('${taskId}')">Remove</button>
+                        `;
+
+                        // Add comment section
+                        const commentSection = document.createElement('div');
+                        commentSection.classList.add('comments');
+                        
+                        if (isAdmin) {
+                            commentSection.innerHTML = `
+                                <form onsubmit="addComment(event, '${taskId}')">
+                                    <input type="text" id="comment-input-${taskId}" placeholder="Add a comment">
+                                    <button type="submit">Add Comment</button>
+                                </form>
+                            `;
+                        } else {
+                            const existingComment = task.comments[0] ? task.comments[0] : 'No comments yet.';
+                            commentSection.innerHTML = `
+                                <p>${existingComment}</p>
+                            `;
+                        }
+
+                        li.appendChild(commentSection);
+                        taskList.appendChild(li);
+                    });
+                }
+            });
+        }
+
+        // Add a comment to a task
+        function addComment(e, taskId) {
+            e.preventDefault();
+            const commentInput = document.getElementById(`comment-input-${taskId}`);
+            const comment = commentInput.value;
+
+            if (!comment) {
+                alert('Comment cannot be empty.');
+                return;
+            }
+
+            const taskRef = database.ref('tasks/' + taskId);
+            taskRef.update({
+                comments: [comment]
+            }, (error) => {
+                if (error) {
+                    alert('Failed to add comment');
+                } else {
+                    loadTasksFromFirebase();
+                }
+            });
+        }
+
+        // Remove task
+        function removeTask(taskId) {
+            const taskRef = database.ref('tasks/' + taskId);
+            taskRef.remove()
+                .then(() => {
+                    loadTasksFromFirebase();
+                })
+                .catch((error) => {
+                    alert('Failed to remove task');
+                });
+        }
+
+        // Filter tasks
+        function filterTasks() {
+            const query = searchInput.value.toLowerCase();
+            loadTasksFromFirebase(query);
+        }
     </script>
 </body>
-</html>
+    </html>
