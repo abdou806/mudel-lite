@@ -4,12 +4,145 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Help Portal</title>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js"></script>
-    <script src="firebase-config.js"></script>
     <style>
-        /* CSS STYLES */
-        /* باقي الأكواد موجودة في النسخة التي أرسلتها سابقًا */
+        /* General styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #eef2f3;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.8em;
+            font-weight: bold;
+        }
+
+        header p {
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+
+        /* Main content */
+        main {
+            padding: 30px 15px;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        section {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        section:hover {
+            transform: translateY(-5px);
+        }
+
+        section h2 {
+            margin-top: 0;
+            color: #00bcd4;
+            border-bottom: 2px solid #4facfe;
+            padding-bottom: 5px;
+        }
+
+        /* Task list */
+        #task-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        #task-list li {
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        #task-list li span {
+            font-weight: bold;
+        }
+
+        #task-list li em {
+            color: #666;
+        }
+
+        #task-list li button {
+            background-color: #ff4c4c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #task-list li button:hover {
+            background-color: #ff1a1a;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            background-color: #eef2f3;
+            color: #555;
+            font-size: 0.9em;
+        }
+
+        footer p {
+            margin: 0;
+        }
+
+        /* Login Section */
+        #login-section {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        #login-section input {
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
+        #login-section button {
+            width: 100%;
+        }
+
+        #welcome-message {
+            display: none;
+            text-align: center;
+            margin: 20px auto;
+        }
     </style>
 </head>
 <body>
@@ -40,11 +173,15 @@
             </ul>
         </section>
 
-        <section id="add-task">
+        <section id="add-task" style="display: none;">
             <h2>Add a New Task</h2>
             <form id="task-form">
                 <label for="task-name">Task Name:</label>
                 <input type="text" id="task-name" placeholder="Enter task name" required>
+
+                <label for="task-deadline">Deadline (Optional):</label>
+                <input type="datetime-local" id="task-deadline">
+
                 <button type="submit">Add Task</button>
             </form>
         </section>
@@ -54,84 +191,72 @@
         <p>&copy; 2024 Student Help Portal. All rights reserved.</p>
     </footer>
 
+    <script src="firebase-database.js"></script>
     <script>
-        import { getDatabase, ref, set, push, onValue } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
-
-        const database = getDatabase();
-
-        const users = [
-            { username: 'admin', password: 'ghanighanizoro', role: 'admin' },
-            { username: 'student', password: 'abcd', role: 'user' }
-        ];
-
         const loginForm = document.getElementById('login-form');
         const loginSection = document.getElementById('login-section');
         const mainContent = document.getElementById('main-content');
         const welcomeMessage = document.getElementById('welcome-message');
         const userRoleSpan = document.getElementById('user-role');
         const taskForm = document.getElementById('task-form');
+        const addTaskSection = document.getElementById('add-task');
         const taskList = document.getElementById('task-list');
 
-        let currentUserRole = null;
-
-        loginForm.addEventListener('submit', function (e) {
+        loginForm.addEventListener('submit', async function (e) {
             e.preventDefault();
 
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            const user = users.find(
-                user => user.username === username && user.password === password
-            );
+            try {
+                const snapshot = await firebase.database().ref('users').once('value');
+                const users = snapshot.val();
 
-            if (user) {
-                currentUserRole = user.role;
-                userRoleSpan.textContent = user.role === 'admin' ? 'Admin' : 'User';
+                const user = Object.values(users).find(
+                    u => u.username === username && u.password === password
+                );
 
-                loginSection.style.display = 'none';
-                welcomeMessage.style.display = 'block';
-                mainContent.style.display = 'block';
+                if (user) {
+                    const isAdmin = user.role === 'admin';
+                    userRoleSpan.textContent = isAdmin ? 'Admin' : 'User';
 
-                if (currentUserRole !== 'admin') {
-                    document.getElementById('add-task').style.display = 'none';
+                    loginSection.style.display = 'none';
+                    welcomeMessage.style.display = 'block';
+                    mainContent.style.display = 'block';
+
+                    if (isAdmin) {
+                        addTaskSection.style.display = 'block';
+                    }
+
+                    loadTasks();
+                } else {
+                    alert('Invalid credentials');
                 }
-
-                loadTasks();
-            } else {
-                alert('Invalid credentials');
+            } catch (error) {
+                console.error('Error fetching users:', error);
+                alert('An error occurred. Please try again.');
             }
         });
 
-        taskForm.addEventListener('submit', function (e) {
+        taskForm.addEventListener('submit', async function (e) {
             e.preventDefault();
 
             const taskName = document.getElementById('task-name').value;
+            const taskDeadline = document.getElementById('task-deadline').value || 'No deadline';
 
-            if (!taskName) return alert('Please enter a task name.');
-
-            const tasksRef = ref(database, 'tasks');
-            const newTaskRef = push(tasksRef);
-            set(newTaskRef, { name: taskName });
+            const newTaskRef = firebase.database().ref('tasks').push();
+            await newTaskRef.set({
+                name: taskName,
+                deadline: taskDeadline
+            });
 
             alert('Task added successfully!');
             loadTasks();
         });
 
-        function loadTasks() {
-            const tasksRef = ref(database, 'tasks');
-            onValue(tasksRef, (snapshot) => {
-                taskList.innerHTML = '';
-                const tasks = snapshot.val();
+        async function loadTasks() {
+            const snapshot = await firebase.database().ref('tasks').once('value');
+            const tasks = snapshot.val() || {};
 
-                if (tasks) {
-                    Object.keys(tasks).forEach(key => {
-                        const li = document.createElement('li');
-                        li.textContent = tasks[key].name;
-                        taskList.appendChild(li);
-                    });
-                }
-            });
-        }
-    </script>
-</body>
-</html>
+            taskList.innerHTML = '';
+           
